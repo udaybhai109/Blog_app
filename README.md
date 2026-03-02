@@ -20,6 +20,10 @@ Minimal literary blog built with Next.js 14 App Router, TypeScript, Tailwind CSS
   - Cloudinary image upload
   - Embed link support (YouTube, Instagram, X)
   - Publish and delete posts
+- Reader-side translation on post pages:
+  - Pick preferred language
+  - One-click translate (title + content)
+  - Preference saved in browser
 
 ## Stack
 
@@ -41,7 +45,16 @@ ADMIN_SESSION_SECRET="change-this-session-secret"
 NEXT_PUBLIC_SITE_URL="https://your-domain.vercel.app"
 NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME="your-cloud-name"
 NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET="your-unsigned-upload-preset"
+GOOGLE_TRANSLATE_API_KEY=""
+LIBRETRANSLATE_URL=""
+LIBRETRANSLATE_API_KEY=""
 ```
+
+Translation provider behavior:
+
+- If `GOOGLE_TRANSLATE_API_KEY` is set, it uses Google Cloud Translate API.
+- Else if `LIBRETRANSLATE_URL` is set, it uses LibreTranslate.
+- Else it falls back to Google public endpoint for basic translation.
 
 ## Local Development
 

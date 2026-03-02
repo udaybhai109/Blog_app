@@ -3,6 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { EmbedRenderer } from "@/components/embed-renderer";
 import { MarkdownContent } from "@/components/markdown-content";
+import { PostTranslate } from "@/components/post-translate";
 import { getPostBySlug } from "@/lib/posts";
 
 type PostPageProps = {
@@ -88,6 +89,8 @@ export default async function PostPage({ params }: PostPageProps) {
           <EmbedRenderer embedLink={post.embedLink} />
         </div>
       ) : null}
+
+      <PostTranslate title={post.title} content={post.content} />
 
       <MarkdownContent content={post.content} />
     </article>

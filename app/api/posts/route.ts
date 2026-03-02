@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import { revalidatePath } from "next/cache";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { createPost, getAllPosts } from "@/lib/posts";
@@ -47,6 +48,10 @@ export async function POST(request: NextRequest) {
       imageUrl: payload.imageUrl,
       embedLink: payload.embedLink
     });
+
+    revalidatePath("/");
+    revalidatePath(`/posts/${post.slug}`);
+    revalidatePath("/sitemap.xml");
 
     return NextResponse.json(post, { status: 201 });
   } catch (error) {

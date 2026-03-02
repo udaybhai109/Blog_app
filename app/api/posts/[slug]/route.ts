@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import { revalidatePath } from "next/cache";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { deletePostBySlug, getPostBySlug } from "@/lib/posts";
@@ -28,6 +29,9 @@ export async function DELETE(request: NextRequest, { params }: PostRouteProps) {
 
   try {
     const post = await deletePostBySlug(params.slug);
+    revalidatePath("/");
+    revalidatePath(`/posts/${params.slug}`);
+    revalidatePath("/sitemap.xml");
     return NextResponse.json(post);
   } catch (error) {
     if (

@@ -1,3 +1,31 @@
+import type { Post } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
+import { createSlug } from "@/lib/slug";
+
+export type CreatePostInput = {
+  title: string;
+  slug?: string;
+  content: string;
+  imageUrl?: string | null;
+  embedLink?: string | null;
+};
+
+export async function getAllPosts() {
+  return prisma.post.findMany({
+    orderBy: {
+      createdAt: "desc"
+    }
+  });
+}
+
+export async function getPostBySlug(slug: string) {
+  return prisma.post.findUnique({
+    where: {
+      slug
+    }
+  });
+}
+
 export async function createPost(input: CreatePostInput): Promise<Post> {
   const baseSlug = createSlug(input.slug || input.title);
 
@@ -5,10 +33,9 @@ export async function createPost(input: CreatePostInput): Promise<Post> {
     throw new Error("Slug could not be created. Use a title with letters or numbers.");
   }
 
-  let finalSlug = baseSlug.slice(0, 80); // prevent overly long slugs
+  let finalSlug = baseSlug.slice(0, 80);
   let counter = 1;
 
-  // ensure unique slug
   while (true) {
     const existing = await prisma.post.findUnique({
       where: { slug: finalSlug }
@@ -24,9 +51,17 @@ export async function createPost(input: CreatePostInput): Promise<Post> {
     data: {
       title: input.title.trim(),
       slug: finalSlug,
-      content: input.content, // do NOT trim large content aggressively
+      content: input.content,
       imageUrl: input.imageUrl?.trim() || null,
       embedLink: input.embedLink?.trim() || null
+    }
+  });
+}
+
+export async function deletePostBySlug(slug: string) {
+  return prisma.post.delete({
+    where: {
+      slug
     }
   });
 }

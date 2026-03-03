@@ -13,7 +13,8 @@ type PostPageProps = {
 };
 
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
-  const post = await getPostBySlug(params.slug);
+  const decodedSlug = decodeURIComponent(params.slug);
+  const post = await getPostBySlug(decodedSlug);
 
   if (!post) {
     return {
@@ -43,7 +44,9 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
 export const revalidate = 60;
 
 export default async function PostPage({ params }: PostPageProps) {
-  const post = await getPostBySlug(params.slug);
+  const decodedSlug = decodeURIComponent(params.slug);
+  const post = await getPostBySlug(decodedSlug);
+
   if (!post) {
     notFound();
   }
@@ -59,7 +62,11 @@ export default async function PostPage({ params }: PostPageProps) {
 
   return (
     <article className="mx-auto w-full max-w-3xl">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+
       <header className="mb-8">
         <p className="text-xs text-muted">
           {new Date(post.createdAt).toLocaleDateString(undefined, {
@@ -68,7 +75,9 @@ export default async function PostPage({ params }: PostPageProps) {
             day: "numeric"
           })}
         </p>
-        <h1 className="mt-2 font-display text-4xl leading-tight sm:text-5xl">{post.title}</h1>
+        <h1 className="mt-2 font-display text-4xl leading-tight sm:text-5xl">
+          {post.title}
+        </h1>
       </header>
 
       {post.imageUrl ? (
@@ -91,7 +100,6 @@ export default async function PostPage({ params }: PostPageProps) {
       ) : null}
 
       <PostTranslate title={post.title} content={post.content} />
-
       <MarkdownContent content={post.content} />
     </article>
   );
